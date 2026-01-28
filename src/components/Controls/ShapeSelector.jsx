@@ -9,6 +9,8 @@ const SHAPES = [
     { id: 'classy', label: 'Classy' },
     { id: 'classy-rounded', label: 'Classy R' },
     { id: 'extra-rounded', label: 'Extra R' },
+    { id: 'heart', label: 'Heart' },
+    { id: 'diamond', label: 'Diamond' },
 ]
 
 export const ShapeSelector = ({ label, value, onChange, options = SHAPES }) => {

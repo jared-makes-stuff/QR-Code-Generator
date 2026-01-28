@@ -125,13 +125,26 @@ function App() {
                                     onChange={(c) => updateOption('cornersDotOptions', 'color', c)}
                                 />
                                 <ShapeSelector
-                                    label="Corner Shape"
+                                    label="Eye Frame Shape"
                                     value={options.cornersSquareOptions.type}
                                     onChange={(t) => updateOption('cornersSquareOptions', 'type', t)}
                                     options={[
                                         { id: 'square', label: 'Square' },
                                         { id: 'extra-rounded', label: 'Rounded' },
                                         { id: 'dot', label: 'Circle' },
+                                        { id: 'heart', label: 'Heart' },
+                                        { id: 'diamond', label: 'Diamond' },
+                                    ]}
+                                />
+                                <ShapeSelector
+                                    label="Eye Center Shape"
+                                    value={options.cornersDotOptions.type}
+                                    onChange={(t) => updateOption('cornersDotOptions', 'type', t)}
+                                    options={[
+                                        { id: 'square', label: 'Square' },
+                                        { id: 'dot', label: 'Circle' },
+                                        { id: 'heart', label: 'Heart' },
+                                        { id: 'diamond', label: 'Diamond' },
                                     ]}
                                 />
                             </CardContent>
