@@ -5,8 +5,7 @@ export const Layout = ({ children }) => {
         <div className="min-h-screen relative w-full overflow-x-hidden bg-slate-950 text-slate-100 selection:bg-blue-500/30">
             {/* Background Mesh Gradients */}
             <div className="fixed inset-0 z-0 pointer-events-none">
-                {/* Monochrome Background - subtle radial gradient */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-black to-black" />
+                <div className="absolute inset-0 bg-black" />
             </div>
 
             <main className="relative z-10 container mx-auto px-4 py-10 max-w-7xl">

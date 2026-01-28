@@ -56,7 +56,7 @@ function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="grid lg:grid-cols-12 gap-8"
+                className="flex flex-col-reverse lg:grid lg:grid-cols-12 gap-8"
             >
                 {/* Left: Controls */}
                 <div className="lg:col-span-7 space-y-6">
@@ -113,40 +113,47 @@ function App() {
                             <CardHeader>
                                 <CardTitle>Corners</CardTitle>
                             </CardHeader>
-                            <CardContent className="space-y-6">
-                                <ColorPicker
-                                    label="Eye Frame Color"
-                                    value={options.cornersSquareOptions.color}
-                                    onChange={(c) => updateOption('cornersSquareOptions', 'color', c)}
-                                />
-                                <ColorPicker
-                                    label="Eye Center Color"
-                                    value={options.cornersDotOptions.color}
-                                    onChange={(c) => updateOption('cornersDotOptions', 'color', c)}
-                                />
-                                <ShapeSelector
-                                    label="Eye Frame Shape"
-                                    value={options.cornersSquareOptions.type}
-                                    onChange={(t) => updateOption('cornersSquareOptions', 'type', t)}
-                                    options={[
-                                        { id: 'square', label: 'Square' },
-                                        { id: 'extra-rounded', label: 'Rounded' },
-                                        { id: 'dot', label: 'Circle' },
-                                        { id: 'heart', label: 'Heart' },
-                                        { id: 'diamond', label: 'Diamond' },
-                                    ]}
-                                />
-                                <ShapeSelector
-                                    label="Eye Center Shape"
-                                    value={options.cornersDotOptions.type}
-                                    onChange={(t) => updateOption('cornersDotOptions', 'type', t)}
-                                    options={[
-                                        { id: 'square', label: 'Square' },
-                                        { id: 'dot', label: 'Circle' },
-                                        { id: 'heart', label: 'Heart' },
-                                        { id: 'diamond', label: 'Diamond' },
-                                    ]}
-                                />
+                            <CardContent className="space-y-8">
+                                {/* Eye Frame Group */}
+                                <div className="space-y-4">
+                                    <ColorPicker
+                                        label="Eye Frame Color"
+                                        value={options.cornersSquareOptions.color}
+                                        onChange={(c) => updateOption('cornersSquareOptions', 'color', c)}
+                                    />
+                                    <ShapeSelector
+                                        label="Eye Frame Shape"
+                                        value={options.cornersSquareOptions.type}
+                                        onChange={(t) => updateOption('cornersSquareOptions', 'type', t)}
+                                        options={[
+                                            { id: 'square', label: 'Square' },
+                                            { id: 'extra-rounded', label: 'Rounded' },
+                                            { id: 'dot', label: 'Circle' },
+                                            { id: 'heart', label: 'Heart' },
+                                            { id: 'diamond', label: 'Diamond' },
+                                        ]}
+                                    />
+                                </div>
+
+                                {/* Eye Center Group */}
+                                <div className="space-y-4 pt-4 border-t border-white/5">
+                                    <ColorPicker
+                                        label="Eye Center Color"
+                                        value={options.cornersDotOptions.color}
+                                        onChange={(c) => updateOption('cornersDotOptions', 'color', c)}
+                                    />
+                                    <ShapeSelector
+                                        label="Eye Center Shape"
+                                        value={options.cornersDotOptions.type}
+                                        onChange={(t) => updateOption('cornersDotOptions', 'type', t)}
+                                        options={[
+                                            { id: 'square', label: 'Square' },
+                                            { id: 'dot', label: 'Circle' },
+                                            { id: 'heart', label: 'Heart' },
+                                            { id: 'diamond', label: 'Diamond' },
+                                        ]}
+                                    />
+                                </div>
                             </CardContent>
                         </Card>
 
