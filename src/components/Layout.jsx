@@ -1,14 +1,7 @@
-import React from 'react'
-
 export const Layout = ({ children }) => {
     return (
-        <div className="min-h-screen relative w-full overflow-x-hidden bg-slate-950 text-slate-100 selection:bg-blue-500/30">
-            {/* Background Mesh Gradients */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-black" />
-            </div>
-
-            <main className="relative z-10 container mx-auto px-4 py-10 max-w-7xl">
+        <div className="min-h-screen w-full overflow-x-hidden bg-[#091413] text-[#B0E4CC] selection:bg-[#B0E4CC] selection:text-[#091413]">
+            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:py-12">
                 {children}
             </main>
         </div>

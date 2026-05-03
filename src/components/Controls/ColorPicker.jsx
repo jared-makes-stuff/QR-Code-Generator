@@ -1,95 +1,178 @@
+import { useEffect, useRef, useState } from 'react'
+import { RgbaColorPicker } from 'react-colorful'
+import { ChevronDown } from 'lucide-react'
+import { colord } from 'colord'
 import { Label } from '../ui/Label'
-import { colord, extend } from "colord";
-import namesPlugin from "colord/plugins/names";
-import { cn } from '../../lib/utils';
-extend([namesPlugin]);
+import { cn } from '../../lib/utils'
 
 const PRESETS = [
-    "#000000", "#FFFFFF", "#3B82F6", "#8B5CF6", "#EC4899", "#EF4444", "#F59E0B", "#10B981"
+    '#000000',
+    '#FFFFFF',
+    '#6B7280',
+    '#EF4444',
+    '#F97316',
+    '#FACC15',
+    '#22C55E',
+    '#06B6D4',
+    '#2563EB',
+    '#8B5CF6',
+    '#EC4899',
+    '#14B8A6',
 ]
 
+const toPickerColor = (value) => {
+    const rgba = colord(value).toRgb()
+
+    return {
+        r: rgba.r,
+        g: rgba.g,
+        b: rgba.b,
+        a: rgba.a ?? 1,
+    }
+}
+
+const toColorString = (color) => colord(color).toRgbString()
+
 export const ColorPicker = ({ label, value, onChange }) => {
-    // Ensure standard format
-    const color = colord(value);
-    const hex = color.toHex();
-    const alpha = color.alpha(); // 0 to 1
+    const containerRef = useRef(null)
+    const rafRef = useRef(null)
+    const lastSentValueRef = useRef(value)
+    const [isOpen, setIsOpen] = useState(false)
+    const [pickerColor, setPickerColor] = useState(toPickerColor(value))
+    const [hexDraft, setHexDraft] = useState(colord(value).toHex().toUpperCase())
+    const hexValue = colord(pickerColor).toHex().toUpperCase()
+    const alpha = Math.round((pickerColor.a ?? 1) * 100)
 
-    const handleColorChange = (e) => {
-        const newHex = e.target.value;
-        const newColor = colord(newHex).alpha(alpha);
-        onChange(newColor.toRgbString());
-    };
+    useEffect(() => {
+        if (value === lastSentValueRef.current) return
 
-    const handleAlphaChange = (e) => {
-        const newAlpha = parseFloat(e.target.value);
-        const newColor = color.alpha(newAlpha);
-        onChange(newColor.toRgbString());
-    };
+        if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current)
+            rafRef.current = null
+        }
 
-    const handlePresetClick = (preset) => {
-        onChange(colord(preset).toRgbString());
+        lastSentValueRef.current = value
+        setPickerColor(toPickerColor(value))
+        setHexDraft(colord(value).toHex().toUpperCase())
+    }, [value])
+
+    useEffect(() => {
+        return () => {
+            if (rafRef.current) {
+                cancelAnimationFrame(rafRef.current)
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (containerRef.current && !containerRef.current.contains(event.target)) {
+                setIsOpen(false)
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+
+    const setColor = (nextColor) => {
+        const nextValue = toColorString(nextColor)
+
+        setPickerColor(nextColor)
+        setHexDraft(colord(nextColor).toHex().toUpperCase())
+        lastSentValueRef.current = nextValue
+
+        if (rafRef.current) {
+            cancelAnimationFrame(rafRef.current)
+        }
+
+        rafRef.current = requestAnimationFrame(() => {
+            onChange(nextValue)
+            rafRef.current = null
+        })
+    }
+
+    const handleHexChange = (event) => {
+        const nextHex = event.target.value
+        setHexDraft(nextHex)
+
+        if (!colord(nextHex).isValid()) return
+
+        setColor({
+            ...toPickerColor(nextHex),
+            a: pickerColor.a ?? 1,
+        })
     }
 
     return (
-        <div className="space-y-3">
-            <div className="flex items-center justify-between">
-                <Label>{label}</Label>
-                <div className="text-xs text-slate-500 font-mono uppercase">{hex} {Math.round(alpha * 100)}%</div>
-            </div>
+        <div className="relative space-y-2" ref={containerRef}>
+            <Label>{label}</Label>
+            <button
+                type="button"
+                onClick={() => setIsOpen((current) => !current)}
+                className="flex h-11 w-full items-center justify-between gap-3 rounded-lg border border-[#408A71]/45 bg-[#091413]/55 px-3 text-left transition-colors hover:border-[#B0E4CC]/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B0E4CC]"
+                aria-expanded={isOpen}
+            >
+                <span className="flex min-w-0 items-center gap-3">
+                    <span
+                        className="h-6 w-6 shrink-0 rounded-md border border-[#408A71]/55"
+                        style={{ backgroundColor: toColorString(pickerColor) }}
+                        aria-hidden="true"
+                    />
+                    <span className="truncate text-sm font-semibold text-[#B0E4CC]">{hexValue}</span>
+                </span>
+                <span className="flex shrink-0 items-center gap-2 text-xs font-semibold text-[#B0E4CC]/75">
+                    {alpha}%
+                    <ChevronDown className={cn('h-4 w-4 transition-transform', isOpen && 'rotate-180')} />
+                </span>
+            </button>
 
-            <div className="space-y-4">
-                {/* Presets Grid */}
-                <div className="flex flex-wrap gap-3">
-                    {PRESETS.map((preset) => (
-                        <button
-                            key={preset}
-                            onClick={() => handlePresetClick(preset)}
-                            className={cn(
-                                "w-8 h-8 rounded-full border transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm",
-                                hex === colord(preset).toHex()
-                                    ? 'border-white ring-2 ring-white/20 scale-110 shadow-md'
-                                    : 'border-white/10'
-                            )}
-                            style={{ backgroundColor: preset }}
-                            aria-label={`Select color ${preset}`}
+            {isOpen && (
+                <div
+                    className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-50 space-y-3 rounded-lg border border-[#408A71]/45 bg-[#285A48] p-3"
+                    onMouseDown={(event) => event.stopPropagation()}
+                    onPointerDown={(event) => event.stopPropagation()}
+                >
+                    <RgbaColorPicker color={pickerColor} onChange={setColor} />
+
+                    <div className="grid grid-cols-[1fr_4rem] gap-2">
+                        <input
+                            value={hexDraft}
+                            onChange={handleHexChange}
+                            onBlur={() => setHexDraft(hexValue)}
+                            className="h-10 rounded-lg border border-[#408A71]/45 bg-[#091413]/65 px-3 text-sm font-semibold uppercase text-[#B0E4CC] outline-none transition-all placeholder:text-[#408A71]/85 focus:border-[#B0E4CC]"
+                            aria-label={`${label} hex value`}
                         />
-                    ))}
-
-                    {/* Color Input Trigger */}
-                    <div className="relative w-8 h-8 rounded-full overflow-hidden border border-white/10 hover:border-white/40 transition-colors shadow-sm cursor-pointer group hover:scale-110">
                         <div
-                            className="absolute inset-0"
-                            style={{ backgroundColor: hex }}
+                            className="rounded-lg border border-[#408A71]/45"
+                            style={{ backgroundColor: toColorString(pickerColor) }}
+                            aria-hidden="true"
                         />
-                        {/* Rainbow gradient border effect or just icon? Let's stick to simple input overlay */}
-                        <input
-                            type="color"
-                            value={hex}
-                            onChange={handleColorChange}
-                            className="absolute -top-[50%] -left-[50%] w-[200%] h-[200%] p-0 m-0 cursor-pointer opacity-0"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none text-white/50 group-hover:text-white">
-                            <span className="text-[10px]">+</span>
-                        </div>
                     </div>
-                </div>
 
-                {/* Opacity Slider */}
-                <div className="pt-1">
-                    <div className="relative flex items-center w-full h-4 group">
-                        <div className="absolute inset-x-0 h-1.5 bg-gradient-to-r from-transparent to-white/20 rounded-full" />
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={alpha}
-                            onChange={handleAlphaChange}
-                            className="relative w-full h-1.5 bg-transparent appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:shadow-md hover:[&::-webkit-slider-thumb]:scale-125 transition-all"
-                        />
+                    <div className="grid grid-cols-6 gap-2 sm:grid-cols-12">
+                        {PRESETS.map((preset) => {
+                            const isSelected = colord(preset).toHex() === colord(pickerColor).toHex()
+
+                            return (
+                                <button
+                                    key={preset}
+                                    type="button"
+                                    onClick={() => setColor({ ...toPickerColor(preset), a: 1 })}
+                                    className={cn(
+                                        'h-7 rounded-md border transition-all duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#B0E4CC]',
+                                        isSelected
+                                            ? 'border-[#B0E4CC]'
+                                            : 'border-[#408A71]/45'
+                                    )}
+                                    style={{ backgroundColor: preset }}
+                                    aria-label={`Select color ${preset}`}
+                                />
+                            )
+                        })}
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     )
 }

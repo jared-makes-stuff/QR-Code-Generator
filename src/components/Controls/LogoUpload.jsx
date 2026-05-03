@@ -1,8 +1,6 @@
-import React, { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Label } from '../ui/Label'
 import { Upload, X } from 'lucide-react'
-import { Button } from '../ui/Button'
-import { cn } from '../../lib/utils'
 
 export const LogoUpload = ({ label, value, onChange }) => {
     const inputRef = useRef(null)
@@ -30,13 +28,13 @@ export const LogoUpload = ({ label, value, onChange }) => {
 
             {!value ? (
                 <div
-                    className="border-2 border-dashed border-white/10 rounded-xl p-6 flex flex-col items-center justify-center gap-2 hover:bg-white/5 transition-colors cursor-pointer"
+                    className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#408A71]/45 bg-[#408A71]/12 p-6 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-[#B0E4CC]/60 hover:bg-[#408A71]/24"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={onDrop}
                     onClick={() => inputRef.current?.click()}
                 >
-                    <Upload className="w-8 h-8 text-slate-400" />
-                    <p className="text-xs text-slate-400 font-medium">Click or drag logo here</p>
+                    <Upload className="h-8 w-8 text-[#B0E4CC]" />
+                    <p className="text-xs font-medium text-[#B0E4CC]/75">Click or drag logo here</p>
                     <input
                         ref={inputRef}
                         type="file"
@@ -46,13 +44,13 @@ export const LogoUpload = ({ label, value, onChange }) => {
                     />
                 </div>
             ) : (
-                <div className="relative group w-24 h-24 bg-white rounded-xl flex items-center justify-center overflow-hidden border border-white/20">
+                <div className="group relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-lg border border-[#408A71]/45 bg-[#B0E4CC] p-2">
                     <img src={value} alt="Logo" className="max-w-full max-h-full object-contain" />
                     <button
                         onClick={() => onChange('')}
-                        className="absolute top-1 right-1 bg-black/50 hover:bg-black/70 rounded-full p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute right-1 top-1 rounded-full bg-[#091413]/80 p-1 text-[#B0E4CC] opacity-0 transition-opacity duration-200 hover:bg-[#091413] group-hover:opacity-100"
                     >
-                        <X className="w-4 h-4" />
+                        <X className="h-4 w-4" />
                     </button>
                 </div>
             )}

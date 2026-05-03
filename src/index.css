@@ -3,7 +3,50 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply bg-[#091413] font-sans;
+  }
+
   body {
-    @apply antialiased text-gray-900 bg-gray-50;
+    @apply bg-[#091413] text-[#B0E4CC] antialiased;
+  }
+
+  *,
+  ::before,
+  ::after {
+    font-family: inherit;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+}
+
+@layer components {
+  .react-colorful {
+    width: 100% !important;
+    height: 174px !important;
+    gap: 10px;
+  }
+
+  .react-colorful__saturation {
+    border: 1px solid rgb(64 138 113 / 0.45) !important;
+    border-radius: 8px !important;
+  }
+
+  .react-colorful__hue,
+  .react-colorful__alpha {
+    height: 12px !important;
+    border-radius: 999px !important;
+  }
+
+  .react-colorful__pointer {
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid #b0e4cc !important;
+    box-shadow: none !important;
   }
 }
